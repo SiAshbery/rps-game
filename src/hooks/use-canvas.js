@@ -1,15 +1,14 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef } from 'react';
 
 export const canvasWidth = 1280;
 export const canvasHeight = 720;
 
-export default function useCanvas(initialGameObjects) {
+export default function useCanvas(gameObjects) {
   const canvasRef = useRef(null);
-  const [gameObjects, setGameObjects] = useState(initialGameObjects);
 
-  useEffect(() => {
-    const canvasObj = canvasRef.current;
-    const context = canvasObj.getContext('2d');
+  const render = () => {
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
 
     context.clearRect(0, 0, canvasWidth, canvasHeight);
     context.fillStyle = '#000000';
@@ -18,7 +17,7 @@ export default function useCanvas(initialGameObjects) {
     gameObjects.forEach((gameObject) => {
       gameObject.draw(context);
     });
-  }, [gameObjects]);
+  };
 
-  return [setGameObjects, canvasRef, canvasWidth, canvasHeight];
+  return [render, canvasRef, canvasWidth, canvasHeight];
 }

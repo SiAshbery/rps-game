@@ -8,14 +8,13 @@ export default function useGameObject(
 ) {
   const [position, setPosition] = useState(initialPosition);
   const [scale, setScale] = useState(initialScale);
-  const [sprite, setSprite] = useState(initialSprite);
 
-  const draw = (context) => {
+  const draw = (context, newSprite = null) => {
     const image = new Image();
     image.onload = () => {
       context.drawImage(image, position.x, position.y, scale.x, scale.y);
     };
-    image.src = sprite;
+    image.src = newSprite || initialSprite;
   };
 
   return {
@@ -23,8 +22,6 @@ export default function useGameObject(
     setPosition,
     scale,
     setScale,
-    sprite,
-    setSprite,
     draw,
   };
 }
