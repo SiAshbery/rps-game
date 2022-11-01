@@ -32,14 +32,14 @@ const ui = () => {
     drawImg,
   );
   const scoreCounter = useNumber({ x: 420, y: 600 }, { x: 128, y: 128 });
-  const roundCounter = useNumber({ x: 420, y: 600 }, { x: 128, y: 128 });
+  const roundCounter = useNumber({ x: 1100, y: 600 }, { x: 128, y: 128 });
   const gamesWonText = useGameObject(
     { x: 0, y: 600 },
     { x: 512, y: 128 },
     gamesWonTextImg,
   );
   const roundsWonText = useGameObject(
-    { x: 0, y: 600 },
+    { x: 640, y: 600 },
     { x: 512, y: 128 },
     roundsWonTextImg,
   );

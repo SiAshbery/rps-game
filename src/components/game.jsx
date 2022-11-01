@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+// components
+import PlayerAttackOptions from './player-attack-options';
+import GameSetupOptions from './game-setup-options';
+
 // hooks
 import useCanvas from '../hooks/use-canvas';
 
@@ -26,12 +30,9 @@ const GamePlayButton = styled.button`
   cursor: pointer;
 `;
 
-const PlayerAttackOptions = styled.div`
-  display: flex;
-`;
-
 function Game() {
   const [gameState, setCurrentGameState] = useState('start');
+  const [maxGameRounds, setMaxGameRounds] = useState(3);
 
   const { player, opponent } = competitors();
   const {
@@ -47,6 +48,7 @@ function Game() {
 
   const availableScenes = {
     start: [pressStartPrompt, gamesWonText, scoreCounter],
+    gameSetUp: [pressStartPrompt, gamesWonText, scoreCounter],
     play: [player, opponent, roundsWonText, roundCounter],
     win: [player, opponent, roundsWonText, roundCounter, youWinPrompt],
     lose: [player, opponent, roundsWonText, roundCounter, youLosePrompt],
@@ -56,16 +58,39 @@ function Game() {
   const [render, canvasRef, canvasWidth, canvasHeight] = useCanvas();
 
   const changeScene = (newScene) => {
-    scoreCounter.setCurrentNumber(player.gameWins);
-    roundCounter.setCurrentNumber(player.roundWins);
     setCurrentGameState(newScene);
   };
 
   useEffect(() => {
+    // any changes to graphics need to happen in this useEffect.
+    scoreCounter.setCurrentNumber(player.gameWins);
+    roundCounter.setCurrentNumber(player.roundWins);
     render(availableScenes[gameState]);
-  }, [player, opponent, gameState]);
+  }, [gameState]);
 
-  const determineWinner = (chosenHand) => {
+  const determineGameWinner = () => {
+    const roundsToWin = Math.ceil(maxGameRounds / 2);
+
+    if (player.roundWins === roundsToWin) {
+      player.setGameWins(player.gameWins + 1);
+      player.setRoundWins(0);
+      opponent.setRoundWins(0);
+      changeScene('start');
+    }
+    if (opponent.roundWins === roundsToWin) {
+      player.setRoundWins(0);
+      opponent.setRoundWins(0);
+      changeScene('start');
+    }
+  };
+
+  const pauseBeforeResumePlay = () => {
+    setTimeout(() => {
+      changeScene('play');
+    }, 1000);
+  };
+
+  const determineRoundWinner = (chosenHand) => {
     const opponentHand = Object.keys(availableHands)[
       Math.floor(Math.random() * Object.keys(availableHands).length)
     ];
@@ -74,15 +99,17 @@ function Game() {
     if (availableHands[chosenHand].beats === opponentHand) {
       player.setRoundWins(player.roundWins + 1);
       changeScene('win');
-      return;
+      pauseBeforeResumePlay();
     }
     if (availableHands[opponentHand].beats === chosenHand) {
       changeScene('lose');
-      return;
+      pauseBeforeResumePlay();
     }
     if (opponentHand === chosenHand) {
       changeScene('draw');
+      pauseBeforeResumePlay();
     }
+    determineGameWinner();
   };
 
   return (
@@ -92,23 +119,21 @@ function Game() {
         switch (gameState) {
           case 'start':
             return (
-              <GamePlayButton onClick={() => changeScene('play')}>
-                Start Game
+              <GamePlayButton onClick={() => changeScene('gameSetUp')}>
+                Start New Game
               </GamePlayButton>
+            );
+          case 'gameSetUp':
+            return (
+              <GameSetupOptions setMaxGameRounds={setMaxGameRounds} changeScene={changeScene} />
+            );
+          case 'play':
+            return (
+              <PlayerAttackOptions determineRoundWinner={determineRoundWinner} />
             );
           default:
             return (
-              <PlayerAttackOptions>
-                <GamePlayButton onClick={() => determineWinner('rock')}>
-                  Select Rock
-                </GamePlayButton>
-                <GamePlayButton onClick={() => determineWinner('paper')}>
-                  Select Paper
-                </GamePlayButton>
-                <GamePlayButton onClick={() => determineWinner('scissors')}>
-                  Select Scissors
-                </GamePlayButton>
-              </PlayerAttackOptions>
+              <div>please wait...</div>
             );
         }
       })()}
