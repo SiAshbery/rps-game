@@ -61,6 +61,12 @@ function Game() {
     setCurrentGameState(newScene);
   };
 
+  const pauseBeforeSceneChange = (newScene, time) => {
+    setTimeout(() => {
+      changeScene(newScene);
+    }, time);
+  };
+
   useEffect(() => {
     // any changes to graphics need to happen in this useEffect.
     scoreCounter.setCurrentNumber(player.gameWins);
@@ -75,19 +81,14 @@ function Game() {
       player.setGameWins(player.gameWins + 1);
       player.setRoundWins(0);
       opponent.setRoundWins(0);
-      changeScene('start');
-    }
-    if (opponent.roundWins === roundsToWin) {
+      pauseBeforeSceneChange('start', 1000);
+    } else if (opponent.roundWins === roundsToWin) {
       player.setRoundWins(0);
       opponent.setRoundWins(0);
-      changeScene('start');
+      pauseBeforeSceneChange('start', 1000);
+    } else {
+      pauseBeforeSceneChange('play', 1000);
     }
-  };
-
-  const pauseBeforeResumePlay = () => {
-    setTimeout(() => {
-      changeScene('play');
-    }, 1000);
   };
 
   const determineRoundWinner = (chosenHand) => {
@@ -99,15 +100,12 @@ function Game() {
     if (availableHands[chosenHand].beats === opponentHand) {
       player.setRoundWins(player.roundWins + 1);
       changeScene('win');
-      pauseBeforeResumePlay();
     }
     if (availableHands[opponentHand].beats === chosenHand) {
       changeScene('lose');
-      pauseBeforeResumePlay();
     }
     if (opponentHand === chosenHand) {
       changeScene('draw');
-      pauseBeforeResumePlay();
     }
     determineGameWinner();
   };
@@ -125,16 +123,19 @@ function Game() {
             );
           case 'gameSetUp':
             return (
-              <GameSetupOptions setMaxGameRounds={setMaxGameRounds} changeScene={changeScene} />
+              <GameSetupOptions
+                setMaxGameRounds={setMaxGameRounds}
+                changeScene={changeScene}
+              />
             );
           case 'play':
             return (
-              <PlayerAttackOptions determineRoundWinner={determineRoundWinner} />
+              <PlayerAttackOptions
+                determineRoundWinner={determineRoundWinner}
+              />
             );
           default:
-            return (
-              <div>please wait...</div>
-            );
+            return <div>please wait...</div>;
         }
       })()}
     </GameArea>
