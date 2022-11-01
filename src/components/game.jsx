@@ -1,19 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+
+// hooks
 import useCanvas from '../hooks/use-canvas';
-import useCompetitor from '../hooks/use-competitor';
-import playerHandRockImg from '../assets/hand-player-rock.png';
-import playerHandPaperImg from '../assets/hand-player-paper.png';
-import playerHandScissorsImg from '../assets/hand-player-scissors.png';
-import opponentHandRockImg from '../assets/hand-opponent-rock.png';
-import opponentHandPaperImg from '../assets/hand-opponent-paper.png';
-import opponentHandScissorsImg from '../assets/hand-opponent-scissors.png';
-import pressStartImg from '../assets/press-start.png';
-import youWinImg from '../assets/you-win.png';
-import youLoseImg from '../assets/you-lose.png';
-import drawImg from '../assets/draw.png';
-import useGameObject from '../hooks/use-game-object';
-import CONSTANTS from '../constants';
+
+// game objects
+import competitors from '../game-objects/competitors';
+import ui from '../game-objects/ui';
+
+// constants
+import { availableHands } from '../constants';
 
 const Canvas = styled.canvas`
   margin: 24px 0;
@@ -36,73 +32,56 @@ const PlayerAttackOptions = styled.div`
 
 function Game() {
   const [gameState, setCurrentGameState] = useState('start');
-  const player = useCompetitor(
-    { x: 0, y: 0 },
-    { x: 370, y: 676 },
-    {
-      rock: playerHandRockImg,
-      paper: playerHandPaperImg,
-      scissors: playerHandScissorsImg,
-    },
-  );
-  const opponent = useCompetitor(
-    { x: 800, y: 0 },
-    { x: 470, y: 350 },
-    {
-      rock: opponentHandRockImg,
-      paper: opponentHandPaperImg,
-      scissors: opponentHandScissorsImg,
-    },
-  );
-  const pressStartPrompt = useGameObject(
-    { x: 400, y: 260 },
-    { x: 512, y: 128 },
-    pressStartImg,
-  );
-  const youWinPrompt = useGameObject(
-    { x: 400, y: 260 },
-    { x: 512, y: 128 },
-    youWinImg,
-  );
-  const youLosePrompt = useGameObject(
-    { x: 400, y: 260 },
-    { x: 512, y: 128 },
-    youLoseImg,
-  );
-  const drawPrompt = useGameObject(
-    { x: 400, y: 260 },
-    { x: 512, y: 128 },
-    drawImg,
-  );
+
+  const { player, opponent } = competitors();
+  const {
+    pressStartPrompt,
+    youWinPrompt,
+    youLosePrompt,
+    drawPrompt,
+    scoreCounter,
+    gamesWonText,
+    roundCounter,
+    roundsWonText,
+  } = ui();
+
   const availableScenes = {
-    start: [pressStartPrompt],
-    play: [player, opponent],
-    win: [player, opponent, youWinPrompt],
-    lose: [player, opponent, youLosePrompt],
-    draw: [player, opponent, drawPrompt],
+    start: [pressStartPrompt, gamesWonText, scoreCounter],
+    play: [player, opponent, roundsWonText, roundCounter],
+    win: [player, opponent, roundsWonText, roundCounter, youWinPrompt],
+    lose: [player, opponent, roundsWonText, roundCounter, youLosePrompt],
+    draw: [player, opponent, roundsWonText, roundCounter, drawPrompt],
   };
+
   const [render, canvasRef, canvasWidth, canvasHeight] = useCanvas();
+
+  const changeScene = (newScene) => {
+    scoreCounter.setCurrentNumber(player.gameWins);
+    roundCounter.setCurrentNumber(player.roundWins);
+    setCurrentGameState(newScene);
+  };
 
   useEffect(() => {
     render(availableScenes[gameState]);
   }, [player, opponent, gameState]);
 
   const determineWinner = (chosenHand) => {
-    const opponentHand = Object.keys(CONSTANTS.availableHands)[
-      Math.floor(Math.random() * Object.keys(CONSTANTS.availableHands).length)
+    const opponentHand = Object.keys(availableHands)[
+      Math.floor(Math.random() * Object.keys(availableHands).length)
     ];
-    player.setHandState(chosenHand);
-    opponent.setHandState(opponentHand);
-    if (CONSTANTS.availableHands[chosenHand].beats === opponentHand) {
-      setCurrentGameState('win');
+    player.setCurrentHandState(chosenHand);
+    opponent.setCurrentHandState(opponentHand);
+    if (availableHands[chosenHand].beats === opponentHand) {
+      player.setRoundWins(player.roundWins + 1);
+      changeScene('win');
       return;
     }
-    if (CONSTANTS.availableHands[opponentHand].beats === chosenHand) {
-      setCurrentGameState('lose');
+    if (availableHands[opponentHand].beats === chosenHand) {
+      changeScene('lose');
       return;
     }
     if (opponentHand === chosenHand) {
-      setCurrentGameState('draw');
+      changeScene('draw');
     }
   };
 
@@ -113,7 +92,7 @@ function Game() {
         switch (gameState) {
           case 'start':
             return (
-              <GamePlayButton onClick={() => setCurrentGameState('play')}>
+              <GamePlayButton onClick={() => changeScene('play')}>
                 Start Game
               </GamePlayButton>
             );

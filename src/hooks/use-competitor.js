@@ -1,20 +1,19 @@
 import { useState } from 'react';
 import useGameObject from './use-game-object';
-import CONSTANTS from '../constants';
+import { defaultHandState } from '../constants';
 
 export default function useCompetitor(position, scale, availableHandSprites) {
   const [currentHandState, setCurrentHandState] = useState(
-    CONSTANTS.defaultHandState,
+    defaultHandState,
   );
+  const [roundWins, setRoundWins] = useState(0);
+  const [gameWins, setGameWins] = useState(0);
+
   const gameObject = useGameObject(
     position,
     scale,
     availableHandSprites[currentHandState],
   );
-
-  const setHandState = (newState) => {
-    setCurrentHandState(newState);
-  };
 
   const draw = (context) => {
     gameObject.draw(context, availableHandSprites[currentHandState]);
@@ -24,6 +23,9 @@ export default function useCompetitor(position, scale, availableHandSprites) {
     setCurrentHandState,
     gameObject,
     draw,
-    setHandState,
+    roundWins,
+    setRoundWins,
+    gameWins,
+    setGameWins,
   };
 }
