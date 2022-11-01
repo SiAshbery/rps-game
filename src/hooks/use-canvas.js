@@ -3,10 +3,10 @@ import { useRef } from 'react';
 export const canvasWidth = 1280;
 export const canvasHeight = 720;
 
-export default function useCanvas(gameObjects) {
+export default function useCanvas() {
   const canvasRef = useRef(null);
 
-  const render = () => {
+  const render = (scene) => {
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
 
@@ -14,7 +14,7 @@ export default function useCanvas(gameObjects) {
     context.fillStyle = '#000000';
     context.fillRect(0, 0, context.canvas.width, context.canvas.height);
 
-    gameObjects.forEach((gameObject) => {
+    scene.forEach((gameObject) => {
       gameObject.draw(context);
     });
   };
