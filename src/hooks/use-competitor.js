@@ -8,6 +8,7 @@ export default function useCompetitor(position, scale, availableHandSprites) {
   );
   const [roundWins, setRoundWins] = useState(0);
   const [gameWins, setGameWins] = useState(0);
+  const [gameLosses, setGameLosses] = useState(0);
 
   const gameObject = useGameObject(
     position,
@@ -27,5 +28,7 @@ export default function useCompetitor(position, scale, availableHandSprites) {
     setRoundWins,
     gameWins,
     setGameWins,
+    gameLosses,
+    setGameLosses,
   };
 }

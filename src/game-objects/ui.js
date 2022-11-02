@@ -8,6 +8,7 @@ import youWinImg from '../assets/you-win.png';
 import youLoseImg from '../assets/you-lose.png';
 import drawImg from '../assets/draw.png';
 import gamesWonTextImg from '../assets/games-won.png';
+import gamesLostTextImg from '../assets/games-lost.png';
 import roundsWonTextImg from '../assets/rounds-won.png';
 
 const ui = () => {
@@ -31,13 +32,19 @@ const ui = () => {
     { x: 512, y: 128 },
     drawImg,
   );
-  const scoreCounter = useNumber({ x: 420, y: 600 }, { x: 128, y: 128 });
+  const gamesWonCounter = useNumber({ x: 410, y: 520 }, { x: 128, y: 128 });
+  const gamesLostCounter = useNumber({ x: 440, y: 600 }, { x: 128, y: 128 });
   const roundCounter = useNumber({ x: 1100, y: 600 }, { x: 128, y: 128 });
   const opponentRoundCounter = useNumber({ x: 460, y: 0 }, { x: 128, y: 128 });
   const gamesWonText = useGameObject(
-    { x: 0, y: 600 },
+    { x: -18, y: 520 },
     { x: 512, y: 128 },
     gamesWonTextImg,
+  );
+  const gamesLostText = useGameObject(
+    { x: 0, y: 600 },
+    { x: 512, y: 128 },
+    gamesLostTextImg,
   );
   const roundsWonText = useGameObject(
     { x: 640, y: 600 },
@@ -55,12 +62,14 @@ const ui = () => {
     youWinPrompt,
     youLosePrompt,
     drawPrompt,
-    scoreCounter,
+    gamesWonCounter,
     gamesWonText,
     roundCounter,
     roundsWonText,
     opponentRoundCounter,
     opponentRoundsWonText,
+    gamesLostText,
+    gamesLostCounter,
   };
 };
 

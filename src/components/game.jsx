@@ -40,17 +40,31 @@ function Game() {
     youWinPrompt,
     youLosePrompt,
     drawPrompt,
-    scoreCounter,
+    gamesWonCounter,
     gamesWonText,
     roundCounter,
     roundsWonText,
     opponentRoundCounter,
     opponentRoundsWonText,
+    gamesLostCounter,
+    gamesLostText,
   } = ui();
 
   const availableScenes = {
-    start: [pressStartPrompt, gamesWonText, scoreCounter],
-    gameSetUp: [pressStartPrompt, gamesWonText, scoreCounter],
+    start: [
+      pressStartPrompt,
+      gamesWonText,
+      gamesWonCounter,
+      gamesLostText,
+      gamesLostCounter,
+    ],
+    gameSetUp: [
+      pressStartPrompt,
+      gamesWonText,
+      gamesWonCounter,
+      gamesLostText,
+      gamesLostCounter,
+    ],
     play: [
       player,
       opponent,
@@ -102,7 +116,8 @@ function Game() {
 
   useEffect(() => {
     // any changesthat trigger graphics updates need to happen in this useEffect.
-    scoreCounter.setCurrentNumber(player.gameWins);
+    gamesWonCounter.setCurrentNumber(player.gameWins);
+    gamesLostCounter.setCurrentNumber(player.gameLosses);
     roundCounter.setCurrentNumber(player.roundWins);
     opponentRoundCounter.setCurrentNumber(opponent.roundWins);
 
@@ -117,6 +132,7 @@ function Game() {
       opponent.setRoundWins(0);
       pauseBeforeSceneChange('start', 1000);
     } else if (opponentRoundsWon === roundsToWin) {
+      player.setGameLosses(player.gameLosses + 1);
       player.setRoundWins(0);
       opponent.setRoundWins(0);
       pauseBeforeSceneChange('start', 1000);
@@ -177,26 +193,6 @@ function Game() {
             return <div>please wait...</div>;
         }
       })()}
-      <div>
-        max rounds:
-        {' '}
-        {maxGameRounds}
-      </div>
-      <div>
-        rounds to win:
-        {' '}
-        {Math.ceil(maxGameRounds / 2)}
-      </div>
-      <div>
-        player wins:
-        {' '}
-        {player.roundWins}
-      </div>
-      <div>
-        opponent wins:
-        {' '}
-        {opponent.roundWins}
-      </div>
     </GameArea>
   );
 }
