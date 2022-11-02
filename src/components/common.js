@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const GamePlayButton = styled.button`
-  background: #ffffff;
+  background: ${(props) => props.color};
   cursor: pointer;
   padding: 12px 24px;
 `;

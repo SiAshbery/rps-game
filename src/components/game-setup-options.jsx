@@ -6,6 +6,7 @@ import {
   GamePlayButtonContainer,
   OptionHeader,
 } from './common';
+import { availableColors } from '../constants';
 
 const ConfigReadout = styled.ul`
   color: #ffffff;
@@ -29,6 +30,12 @@ const SetupContainer = styled.div`
   display: flex;
 `;
 
+const ColorPreview = styled.div`
+  height: 50px;
+  width: 50px;
+  background: ${(props) => props.color};
+`;
+
 export default function GameSetupOptions({
   setMaxGameRounds,
   maxRounds,
@@ -39,6 +46,8 @@ export default function GameSetupOptions({
   playerColor,
   setCheatsEnabled,
   cheatsEnabled,
+  canvasFillStyle,
+  setCanvasFillStyle,
 }) {
   return (
     <>
@@ -71,22 +80,67 @@ export default function GameSetupOptions({
             </li>
             <li>
               <OptionHeader>Player color?</OptionHeader>
-              <GamePlayButton onClick={() => setPlayerColor('green')}>
+              <GamePlayButton
+                color={availableColors.green}
+                onClick={() => setPlayerColor('green')}
+              >
                 Green
               </GamePlayButton>
-              <GamePlayButton onClick={() => setPlayerColor('blue')}>
+              <GamePlayButton
+                color={availableColors.blue}
+                onClick={() => setPlayerColor('blue')}
+              >
                 Blue
               </GamePlayButton>
-              <GamePlayButton onClick={() => setPlayerColor('red')}>
+              <GamePlayButton
+                color={availableColors.red}
+                onClick={() => setPlayerColor('red')}
+              >
                 Red
               </GamePlayButton>
-              <GamePlayButton onClick={() => setPlayerColor('yellow')}>
+              <GamePlayButton
+                color={availableColors.yellow}
+                onClick={() => setPlayerColor('yellow')}
+              >
                 Yellow
               </GamePlayButton>
             </li>
             <li>
               <GamePlayButton onClick={() => setCheatsEnabled(!cheatsEnabled)}>
                 Enabled Cheats
+              </GamePlayButton>
+            </li>
+            <li>
+              <OptionHeader>BackgroundColor?</OptionHeader>
+              <GamePlayButton
+                color={availableColors.green}
+                onClick={() => setCanvasFillStyle(availableColors.green)}
+              >
+                Green
+              </GamePlayButton>
+              <GamePlayButton
+                color={availableColors.blue}
+                onClick={() => setCanvasFillStyle(availableColors.blue)}
+              >
+                Blue
+              </GamePlayButton>
+              <GamePlayButton
+                color={availableColors.red}
+                onClick={() => setCanvasFillStyle(availableColors.red)}
+              >
+                Red
+              </GamePlayButton>
+              <GamePlayButton
+                color={availableColors.yellow}
+                onClick={() => setCanvasFillStyle(availableColors.yellow)}
+              >
+                Yellow
+              </GamePlayButton>
+              <GamePlayButton
+                color="#656565"
+                onClick={() => setCanvasFillStyle(availableColors.black)}
+              >
+                Black
               </GamePlayButton>
             </li>
           </Options>
@@ -103,11 +157,15 @@ export default function GameSetupOptions({
           </li>
           <li>
             Player color:
-            {playerColor}
+            <ColorPreview color={availableColors[playerColor]} />
           </li>
           <li>
             Cheats enabled?:
             {cheatsEnabled ? 'Yes' : 'No'}
+          </li>
+          <li>
+            BackgroundColor?:
+            <ColorPreview color={canvasFillStyle} />
           </li>
         </ConfigReadout>
       </SetupContainer>
@@ -125,4 +183,6 @@ GameSetupOptions.propTypes = {
   playerColor: PropTypes.string.isRequired,
   setCheatsEnabled: PropTypes.func.isRequired,
   cheatsEnabled: PropTypes.bool.isRequired,
+  canvasFillStyle: PropTypes.string.isRequired,
+  setCanvasFillStyle: PropTypes.func.isRequired,
 };

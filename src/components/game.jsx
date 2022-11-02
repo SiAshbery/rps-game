@@ -100,7 +100,14 @@ function Game() {
     ],
   };
 
-  const [render, canvasRef, canvasWidth, canvasHeight] = useCanvas();
+  const [
+    render,
+    canvasRef,
+    canvasWidth,
+    canvasHeight,
+    canvasFillStyle,
+    setCanvasFillStyle,
+  ] = useCanvas();
 
   const changeScene = (newScene) => {
     setCurrentGameState(newScene);
@@ -140,7 +147,7 @@ function Game() {
   };
 
   const generateOpponentHand = (chosenHand) => {
-    if (hardMode && !cheatsEnabled) {
+    if (hardMode && chosenHand !== 'cheat') {
       // ░░░░▄▄▄▄▀▀▀▀▀▀▀▀▄▄▄▄▄▄
       // ░░░░█░░░░▒▒▒▒▒▒▒▒▒▒▒▒░░▀▀▄
       // ░░░█░░░▒▒▒▒▒▒░░░░░░░░▒▒▒░░█
@@ -156,11 +163,13 @@ function Game() {
       // ░░░░░░░▀▄▄░▒▒▒▒░░░░░░░░░░█
       // ░░░░░░░░░░▀▀▄▄░▒▒▒▒▒▒▒▒▒▒░█
       // ░░░░░░░░░░░░░░▀▄▄▄▄▄░░░░░█
-      return (Object.keys(availableHands).find((key) => availableHands[key].beats === chosenHand));
+      return Object.keys(availableHands).find(
+        (key) => availableHands[key].beats === chosenHand,
+      );
     }
-    return (Object.keys(availableHands)[
+    return Object.keys(availableHands)[
       Math.floor(Math.random() * Object.keys(availableHands).length)
-    ]);
+    ];
   };
 
   const determineRoundWinner = (chosenHand) => {
@@ -169,7 +178,7 @@ function Game() {
     let opponentRoundsWon = opponent.roundWins;
     player.setCurrentHandState(chosenHand);
     opponent.setCurrentHandState(opponentHand);
-    if (cheatsEnabled || availableHands[chosenHand].beats === opponentHand) {
+    if (chosenHand === 'cheat' || availableHands[chosenHand].beats === opponentHand) {
       playerRoundsWon += 1;
       player.setRoundWins(playerRoundsWon);
       changeScene('win');
@@ -206,6 +215,8 @@ function Game() {
                 playerColor={player.competitorColor}
                 setCheatsEnabled={setCheatsEnabled}
                 cheatsEnabled={cheatsEnabled}
+                canvasFillStyle={canvasFillStyle}
+                setCanvasFillStyle={setCanvasFillStyle}
               />
             );
           case 'play':

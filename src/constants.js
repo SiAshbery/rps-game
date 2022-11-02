@@ -27,3 +27,11 @@ export const numberSprites = [
   number8Img,
   number9Img,
 ];
+
+export const availableColors = {
+  green: '#87ad86',
+  blue: '#82acb9',
+  red: '#ca97af',
+  yellow: '#aba67d',
+  black: '#000000',
+};
