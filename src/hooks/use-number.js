@@ -1,15 +1,8 @@
 import { useState } from 'react';
-import useGameObject from './use-game-object';
 import { numberSprites } from '../constants';
 
 export default function useNumber(position, scale) {
   const [currentNumber, setCurrentNumber] = useState(0);
-
-  const gameObject = useGameObject(
-    position,
-    scale,
-    numberSprites[currentNumber],
-  );
 
   const drawMultiple = (context) => {
     const digits = currentNumber.toString().split('').map(Number);
@@ -34,7 +27,6 @@ export default function useNumber(position, scale) {
   };
 
   return {
-    gameObject,
     draw,
     currentNumber,
     setCurrentNumber,

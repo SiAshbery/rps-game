@@ -2,7 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { GamePlayButton, GamePlayButtonContainer } from './common';
 
-export default function PlayerAttackOptions({ determineRoundWinner }) {
+export default function PlayerAttackOptions({
+  determineRoundWinner,
+  cheatsEnabled,
+}) {
   return (
     <GamePlayButtonContainer>
       <GamePlayButton onClick={() => determineRoundWinner('rock')}>
@@ -14,10 +17,16 @@ export default function PlayerAttackOptions({ determineRoundWinner }) {
       <GamePlayButton onClick={() => determineRoundWinner('scissors')}>
         Select Scissors
       </GamePlayButton>
+      {cheatsEnabled && (
+        <GamePlayButton onClick={() => determineRoundWinner('cheat')}>
+          Cheat
+        </GamePlayButton>
+      )}
     </GamePlayButtonContainer>
   );
 }
 
 PlayerAttackOptions.propTypes = {
   determineRoundWinner: PropTypes.func.isRequired,
+  cheatsEnabled: PropTypes.bool.isRequired,
 };

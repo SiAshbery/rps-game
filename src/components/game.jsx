@@ -4,6 +4,7 @@ import styled from 'styled-components';
 // components
 import PlayerAttackOptions from './player-attack-options';
 import GameSetupOptions from './game-setup-options';
+import { GamePlayButton } from './common';
 
 // hooks
 import useCanvas from '../hooks/use-canvas';
@@ -25,14 +26,11 @@ const GameArea = styled.div`
   margin: auto;
 `;
 
-const GamePlayButton = styled.button`
-  background: '#252525';
-  cursor: pointer;
-`;
-
 function Game() {
   const [gameState, setCurrentGameState] = useState('start');
   const [maxGameRounds, setMaxGameRounds] = useState(3);
+  const [hardMode, setHardMode] = useState(false);
+  const [cheatsEnabled, setCheatsEnabled] = useState(false);
 
   const { player, opponent } = competitors();
   const {
@@ -141,25 +139,45 @@ function Game() {
     }
   };
 
-  const determineRoundWinner = (chosenHand) => {
-    const opponentHand = Object.keys(availableHands)[
+  const generateOpponentHand = (chosenHand) => {
+    if (hardMode && !cheatsEnabled) {
+      // ░░░░▄▄▄▄▀▀▀▀▀▀▀▀▄▄▄▄▄▄
+      // ░░░░█░░░░▒▒▒▒▒▒▒▒▒▒▒▒░░▀▀▄
+      // ░░░█░░░▒▒▒▒▒▒░░░░░░░░▒▒▒░░█
+      // ░░█░░░░░░▄██▀▄▄░░░░░▄▄▄░░░█
+      // ░▀▒▄▄▄▒░█▀▀▀▀▄▄█░░░██▄▄█░░░█
+      // █▒█▒▄░▀▄▄▄▀░░░░░░░░█░░░▒▒▒▒▒█
+      // █▒█░█▀▄▄░░░░░█▀░░░░▀▄░░▄▀▀▀▄▒█
+      // ░█▀▄░█▄░█▀▄▄░▀░▀▀░▄▄▀░░░░█░░█
+      // ░░█░░▀▄▀█▄▄░█▀▀▀▄▄▄▄▀▀█▀██░█
+      // ░░░█░░██░░▀█▄▄▄█▄▄█▄████░█
+      // ░░░░█░░░▀▀▄░█░░░█░███████░█
+      // ░░░░░▀▄░░░▀▀▄▄▄█▄█▄█▄█▄▀░░█
+      // ░░░░░░░▀▄▄░▒▒▒▒░░░░░░░░░░█
+      // ░░░░░░░░░░▀▀▄▄░▒▒▒▒▒▒▒▒▒▒░█
+      // ░░░░░░░░░░░░░░▀▄▄▄▄▄░░░░░█
+      return (Object.keys(availableHands).find((key) => availableHands[key].beats === chosenHand));
+    }
+    return (Object.keys(availableHands)[
       Math.floor(Math.random() * Object.keys(availableHands).length)
-    ];
+    ]);
+  };
+
+  const determineRoundWinner = (chosenHand) => {
+    const opponentHand = generateOpponentHand(chosenHand);
     let playerRoundsWon = player.roundWins;
     let opponentRoundsWon = opponent.roundWins;
     player.setCurrentHandState(chosenHand);
     opponent.setCurrentHandState(opponentHand);
-    if (availableHands[chosenHand].beats === opponentHand) {
+    if (cheatsEnabled || availableHands[chosenHand].beats === opponentHand) {
       playerRoundsWon += 1;
       player.setRoundWins(playerRoundsWon);
       changeScene('win');
-    }
-    if (availableHands[opponentHand].beats === chosenHand) {
+    } else if (availableHands[opponentHand].beats === chosenHand) {
       opponentRoundsWon += 1;
       opponent.setRoundWins(opponentRoundsWon);
       changeScene('lose');
-    }
-    if (opponentHand === chosenHand) {
+    } else if (opponentHand === chosenHand) {
       changeScene('draw');
     }
     determineGameWinner(playerRoundsWon, opponentRoundsWon);
@@ -180,13 +198,21 @@ function Game() {
             return (
               <GameSetupOptions
                 setMaxGameRounds={setMaxGameRounds}
+                maxRounds={maxGameRounds}
                 changeScene={changeScene}
+                setHardMode={setHardMode}
+                hardMode={hardMode}
+                setPlayerColor={player.setCompetitorColor}
+                playerColor={player.competitorColor}
+                setCheatsEnabled={setCheatsEnabled}
+                cheatsEnabled={cheatsEnabled}
               />
             );
           case 'play':
             return (
               <PlayerAttackOptions
                 determineRoundWinner={determineRoundWinner}
+                cheatsEnabled={cheatsEnabled}
               />
             );
           default:

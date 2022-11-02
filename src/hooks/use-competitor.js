@@ -6,6 +6,7 @@ export default function useCompetitor(position, scale, availableHandSprites) {
   const [currentHandState, setCurrentHandState] = useState(
     defaultHandState,
   );
+  const [competitorColor, setCompetitorColor] = useState('green');
   const [roundWins, setRoundWins] = useState(0);
   const [gameWins, setGameWins] = useState(0);
   const [gameLosses, setGameLosses] = useState(0);
@@ -17,7 +18,7 @@ export default function useCompetitor(position, scale, availableHandSprites) {
   );
 
   const draw = (context) => {
-    gameObject.draw(context, availableHandSprites[currentHandState]);
+    gameObject.draw(context, availableHandSprites[competitorColor][currentHandState]);
   };
 
   return {
@@ -30,5 +31,7 @@ export default function useCompetitor(position, scale, availableHandSprites) {
     setGameWins,
     gameLosses,
     setGameLosses,
+    setCompetitorColor,
+    competitorColor,
   };
 }
