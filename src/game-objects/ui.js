@@ -33,6 +33,7 @@ const ui = () => {
   );
   const scoreCounter = useNumber({ x: 420, y: 600 }, { x: 128, y: 128 });
   const roundCounter = useNumber({ x: 1100, y: 600 }, { x: 128, y: 128 });
+  const opponentRoundCounter = useNumber({ x: 460, y: 0 }, { x: 128, y: 128 });
   const gamesWonText = useGameObject(
     { x: 0, y: 600 },
     { x: 512, y: 128 },
@@ -40,6 +41,11 @@ const ui = () => {
   );
   const roundsWonText = useGameObject(
     { x: 640, y: 600 },
+    { x: 512, y: 128 },
+    roundsWonTextImg,
+  );
+  const opponentRoundsWonText = useGameObject(
+    { x: 0, y: 0 },
     { x: 512, y: 128 },
     roundsWonTextImg,
   );
@@ -53,6 +59,8 @@ const ui = () => {
     gamesWonText,
     roundCounter,
     roundsWonText,
+    opponentRoundCounter,
+    opponentRoundsWonText,
   };
 };
 

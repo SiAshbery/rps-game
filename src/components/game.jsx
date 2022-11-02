@@ -44,15 +44,48 @@ function Game() {
     gamesWonText,
     roundCounter,
     roundsWonText,
+    opponentRoundCounter,
+    opponentRoundsWonText,
   } = ui();
 
   const availableScenes = {
     start: [pressStartPrompt, gamesWonText, scoreCounter],
     gameSetUp: [pressStartPrompt, gamesWonText, scoreCounter],
-    play: [player, opponent, roundsWonText, roundCounter],
-    win: [player, opponent, roundsWonText, roundCounter, youWinPrompt],
-    lose: [player, opponent, roundsWonText, roundCounter, youLosePrompt],
-    draw: [player, opponent, roundsWonText, roundCounter, drawPrompt],
+    play: [
+      player,
+      opponent,
+      roundsWonText,
+      roundCounter,
+      opponentRoundCounter,
+      opponentRoundsWonText,
+    ],
+    win: [
+      player,
+      opponent,
+      roundsWonText,
+      roundCounter,
+      opponentRoundCounter,
+      opponentRoundsWonText,
+      youWinPrompt,
+    ],
+    lose: [
+      player,
+      opponent,
+      roundsWonText,
+      roundCounter,
+      opponentRoundCounter,
+      opponentRoundsWonText,
+      youLosePrompt,
+    ],
+    draw: [
+      player,
+      opponent,
+      roundsWonText,
+      roundCounter,
+      opponentRoundCounter,
+      opponentRoundsWonText,
+      drawPrompt,
+    ],
   };
 
   const [render, canvasRef, canvasWidth, canvasHeight] = useCanvas();
@@ -71,6 +104,7 @@ function Game() {
     // any changesthat trigger graphics updates need to happen in this useEffect.
     scoreCounter.setCurrentNumber(player.gameWins);
     roundCounter.setCurrentNumber(player.roundWins);
+    opponentRoundCounter.setCurrentNumber(opponent.roundWins);
 
     render(availableScenes[gameState]);
   }, [gameState]);
