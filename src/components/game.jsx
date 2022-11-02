@@ -68,21 +68,21 @@ function Game() {
   };
 
   useEffect(() => {
-    // any changes to graphics need to happen in this useEffect.
+    // any changesthat trigger graphics updates need to happen in this useEffect.
     scoreCounter.setCurrentNumber(player.gameWins);
     roundCounter.setCurrentNumber(player.roundWins);
+
     render(availableScenes[gameState]);
   }, [gameState]);
 
-  const determineGameWinner = () => {
+  const determineGameWinner = (playerRoundsWon, opponentRoundsWon) => {
     const roundsToWin = Math.ceil(maxGameRounds / 2);
-
-    if (player.roundWins === roundsToWin) {
+    if (playerRoundsWon === roundsToWin) {
       player.setGameWins(player.gameWins + 1);
       player.setRoundWins(0);
       opponent.setRoundWins(0);
       pauseBeforeSceneChange('start', 1000);
-    } else if (opponent.roundWins === roundsToWin) {
+    } else if (opponentRoundsWon === roundsToWin) {
       player.setRoundWins(0);
       opponent.setRoundWins(0);
       pauseBeforeSceneChange('start', 1000);
@@ -95,19 +95,24 @@ function Game() {
     const opponentHand = Object.keys(availableHands)[
       Math.floor(Math.random() * Object.keys(availableHands).length)
     ];
+    let playerRoundsWon = player.roundWins;
+    let opponentRoundsWon = opponent.roundWins;
     player.setCurrentHandState(chosenHand);
     opponent.setCurrentHandState(opponentHand);
     if (availableHands[chosenHand].beats === opponentHand) {
-      player.setRoundWins(player.roundWins + 1);
+      playerRoundsWon += 1;
+      player.setRoundWins(playerRoundsWon);
       changeScene('win');
     }
     if (availableHands[opponentHand].beats === chosenHand) {
+      opponentRoundsWon += 1;
+      opponent.setRoundWins(opponentRoundsWon);
       changeScene('lose');
     }
     if (opponentHand === chosenHand) {
       changeScene('draw');
     }
-    determineGameWinner();
+    determineGameWinner(playerRoundsWon, opponentRoundsWon);
   };
 
   return (
@@ -138,6 +143,26 @@ function Game() {
             return <div>please wait...</div>;
         }
       })()}
+      <div>
+        max rounds:
+        {' '}
+        {maxGameRounds}
+      </div>
+      <div>
+        rounds to win:
+        {' '}
+        {Math.ceil(maxGameRounds / 2)}
+      </div>
+      <div>
+        player wins:
+        {' '}
+        {player.roundWins}
+      </div>
+      <div>
+        opponent wins:
+        {' '}
+        {opponent.roundWins}
+      </div>
     </GameArea>
   );
 }
